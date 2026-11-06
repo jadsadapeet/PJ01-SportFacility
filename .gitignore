@@ -7,3 +7,6 @@ postman/
 
 # local secrets
 config/config.env
+
+.vercel
+.env*
