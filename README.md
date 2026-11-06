@@ -153,6 +153,11 @@ cd frontend && npm test # frontend: booking form date/time helpers
 
 ### Vercel (two projects from this repo)
 
+Live: https://pj01-sportfacility.vercel.app (frontend) and https://pj01-sportfacility-api.vercel.app (API).
+Both projects are connected to this GitHub repo: every push to `main` deploys both to production, and other branches get preview URLs.
+
+Setup used (for a fresh copy):
+
 1. **Backend** – New Project → import this repo → Root Directory `./` (Framework: Express). Env: `MONGO_URI`, `JWT_SECRET`, `JWT_EXPIRE`, `JWT_COOKIE_EXPIRE`, `FRONTEND_URL`. The app connects to MongoDB on the first API request.
 2. **Frontend** – New Project → same repo → Root Directory `frontend` (Framework: Next.js). Env: `NEXT_PUBLIC_API_URL=https://<backend>.vercel.app/api/v1`.
 3. Set the backend's `FRONTEND_URL` to the frontend's production URL and redeploy the backend.
