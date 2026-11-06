@@ -11,7 +11,7 @@ const assert = require("node:assert/strict");
 const mongoose = require("mongoose");
 const request = require("supertest");
 const { MongoMemoryServer } = require("mongodb-memory-server");
-const { app } = require("../server");
+const app = require("../server");
 const User = require("../models/User");
 const Booking = require("../models/Booking");
 const { getLocalNow } = require("../utils/bookingRules");
@@ -36,6 +36,7 @@ before(async () => {
   // Silence the error handler's stack traces for expected 4xx/5xx responses.
   console.error = () => {};
   mongo = await MongoMemoryServer.create();
+  process.env.MONGO_URI = mongo.getUri(); // never the real database from config.env
   await mongoose.connect(mongo.getUri());
 
   await User.create({ name: "Admin", email: "admin@test.com", tel: "0811111111", password: "123456", role: "admin" });
@@ -284,7 +285,7 @@ describe("Rate limiting behind a proxy", () => {
       if (k.endsWith("server.js") && !k.includes("node_modules")) delete require.cache[k];
     }
     process.env.TRUST_PROXY = "1";
-    const { app: proxied } = require("../server");
+    const proxied = require("../server");
     delete process.env.TRUST_PROXY;
     assert.equal(proxied.get("trust proxy"), 1);
 

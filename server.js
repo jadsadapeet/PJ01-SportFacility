@@ -119,7 +119,9 @@
  *   }
  * }
  */
+const path = require("node:path");
 const express = require("express");
+const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
@@ -165,9 +167,24 @@ app.use(cors({
   credentials: true,
 }));
 
+// Make sure MongoDB is connected before any API route runs. On Vercel the app is
+// imported (not started with `node server.js`), so this is where it connects.
+app.use("/api/v1", async (req, res, next) => {
+  if (!process.env.MONGO_URI || mongoose.connection.readyState === 1) return next();
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/facilities", facilities);
 app.use("/api/v1/bookings", bookings);
+
+// Glob patterns need forward slashes, also on Windows.
+const toPosix = (p) => p.split(path.sep).join("/");
 
 const swaggerDocs = swaggerJsDoc({
   definition: {
@@ -190,7 +207,8 @@ const swaggerDocs = swaggerJsDoc({
       },
     },
   },
-  apis: ["./routes/*.js", "./server.js"],
+  // Absolute, forward-slash paths so the docs load from any working directory.
+  apis: [toPosix(path.join(__dirname, "routes", "*.js")), toPosix(__filename)],
 });
 
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
@@ -259,4 +277,6 @@ const start = () => {
 
 if (require.main === module) start();
 
-module.exports = { app, start };
+// Vercel expects the Express app as the module's export.
+module.exports = app;
+module.exports.start = start;

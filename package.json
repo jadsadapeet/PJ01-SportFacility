@@ -30,5 +30,10 @@
     "mongodb-memory-server": "^10.4.3",
     "nodemon": "^3.1.10",
     "supertest": "^7.3.1"
+  },
+  "config": {
+    "mongodbMemoryServer": {
+      "disablePostinstall": "1"
+    }
   }
 }

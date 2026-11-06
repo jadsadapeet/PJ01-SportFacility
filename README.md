@@ -150,3 +150,10 @@ cd frontend && npm test # frontend: booking form date/time helpers
 - Frontend env: `NEXT_PUBLIC_API_URL=https://<backend-host>/api/v1`. Set it **before** `next build`; it is baked into the bundle.
 - MongoDB Atlas: allow the backend host in Network Access.
 - Create the first admin with `npm run create-admin` against the production `MONGO_URI`.
+
+### Vercel (two projects from this repo)
+
+1. **Backend** – New Project → import this repo → Root Directory `./` (Framework: Express). Env: `MONGO_URI`, `JWT_SECRET`, `JWT_EXPIRE`, `JWT_COOKIE_EXPIRE`, `FRONTEND_URL`. The app connects to MongoDB on the first API request.
+2. **Frontend** – New Project → same repo → Root Directory `frontend` (Framework: Next.js). Env: `NEXT_PUBLIC_API_URL=https://<backend>.vercel.app/api/v1`.
+3. Set the backend's `FRONTEND_URL` to the frontend's production URL and redeploy the backend.
+4. MongoDB Atlas → Network Access → allow `0.0.0.0/0` (Vercel has no fixed IPs).
