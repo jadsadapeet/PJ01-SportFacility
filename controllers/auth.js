@@ -16,8 +16,10 @@ const sendTokenResponse = (user, statusCode, res) => {
 
 exports.register = async (req, res, next) => {
   try {
-    const { name, email, tel, password, role } = req.body;
-    const user = await User.create({ name, email, tel, password, role });
+    // Public sign-up always creates a member. Any "role" in the body is ignored;
+    // admins are created with `npm run create-admin`.
+    const { name, email, tel, password } = req.body;
+    const user = await User.create({ name, email, tel, password, role: "member" });
     sendTokenResponse(user, 201, res);
   } catch (error) {
     next(error);

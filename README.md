@@ -94,3 +94,59 @@ The API runs on `http://localhost:5000` by default.
 - `POST /api/v1/bookings` (member)
 - `PUT /api/v1/bookings/:id` (member owner or admin)
 - `DELETE /api/v1/bookings/:id` (member owner or admin)
+
+## Frontend (Next.js)
+
+The web app lives in `frontend/` (Next.js 16, React 19, Tailwind 4).
+
+```bash
+# 1. Backend (port 5000) – copy config/config.env.example to config/config.env and fill MONGO_URI, JWT_SECRET
+npm install
+npm run dev
+
+# 2. Frontend (port 3000), in another terminal
+cd frontend
+npm install
+npm run dev
+```
+
+Open http://localhost:3000. The frontend calls `http://localhost:5000/api/v1` by default; set `NEXT_PUBLIC_API_URL` to change it.
+
+### Booking extras used by the frontend
+
+- `GET /api/v1/facilities/:id/availability?date=YYYY-MM-DD` (public) returns the booked time ranges of a facility on a date, without member details, so the booking form can show free slots.
+- "Today" and "now" follow Thailand time (`Asia/Bangkok`, override with `TZ_NAME`). A booking for today must start after the current time.
+- Facilities are shown as open 06:00–24:00 in 30-minute steps.
+
+### Accounts
+
+- Public registration (`POST /api/v1/auth/register` and the Register page) always creates a **member**. Any `role` sent in the body is ignored.
+- Create an admin from the command line (uses `MONGO_URI` in `config/config.env`; promotes the user if the email already exists):
+
+```bash
+npm run create-admin -- "Admin Name" admin@example.com 0811111111 yourpassword
+```
+
+### Secrets
+
+`config/config.env` holds `MONGO_URI` and `JWT_SECRET` and is git-ignored. Copy `config/config.env.example` to start. Never `git add -f` it.
+
+## Tests
+
+Tests use Node's built-in test runner. API tests start a throwaway in-memory MongoDB, so they never touch the database in `config/config.env` (the first run downloads a MongoDB binary).
+
+```bash
+npm test                # backend: booking-rule unit tests + API tests
+cd frontend && npm test # frontend: booking form date/time helpers
+```
+
+- `tests/bookingRules.test.js` – booking rules at a fixed time (past dates, 2-hour limit, same-day end, overlap)
+- `tests/api.test.js` – auth, roles, facilities, booking 400/409 responses, ownership, availability
+- `frontend/tests/time.test.ts` – client-side validation and formatting used by the booking form
+
+## Deploying
+
+- Backend env: `NODE_ENV=production`, `MONGO_URI`, `JWT_SECRET`, `JWT_EXPIRE`, `JWT_COOKIE_EXPIRE`, `FRONTEND_URL` (the deployed frontend URL, used for CORS). Optional `TRUST_PROXY` (proxy hops, default 1 in production) so rate limiting counts each visitor separately behind the host's proxy.
+- Frontend env: `NEXT_PUBLIC_API_URL=https://<backend-host>/api/v1`. Set it **before** `next build`; it is baked into the bundle.
+- MongoDB Atlas: allow the backend host in Network Access.
+- Create the first admin with `npm run create-admin` against the production `MONGO_URI`.

@@ -1,28 +1,7 @@
 const Booking = require("../models/Booking");
 const Facility = require("../models/Facility");
 
-const parseBookingInput = ({ bookingDate, startTime, durationHours }) => {
-  if (!bookingDate || !/^([01]\d|2[0-3]):[0-5]\d$/.test(startTime || "")) {
-    return { error: "bookingDate and startTime in HH:mm format are required" };
-  }
-  const duration = Number(durationHours);
-  if (!Number.isFinite(duration) || duration <= 0 || duration > 2) {
-    return { error: "Booking duration must be greater than 0 and at most 2 hours" };
-  }
-
-  const date = new Date(`${bookingDate}T00:00:00.000Z`);
-  if (Number.isNaN(date.getTime())) return { error: "Invalid booking date" };
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
-  if (date < today) return { error: "Booking date cannot be in the past" };
-
-  const [hours, minutes] = startTime.split(":").map(Number);
-  const startMinutes = hours * 60 + minutes;
-  const endMinutes = startMinutes + duration * 60;
-  if (endMinutes > 1440) return { error: "Booking must end on the same day" };
-
-  return { date, startMinutes, endMinutes, duration };
-};
+const { parseBookingInput } = require("../utils/bookingRules");
 
 const findConflict = async ({ facility, user, date, startMinutes, endMinutes, excludeId }) => {
   const baseQuery = {

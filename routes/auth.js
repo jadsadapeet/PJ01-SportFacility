@@ -67,14 +67,6 @@
  *             "type": "string",
  *             "minLength": 6,
  *             "format": "password"
- *           },
- *           "role": {
- *             "type": "string",
- *             "enum": [
- *               "member",
- *               "admin"
- *             ],
- *             "default": "member"
  *           }
  *         },
  *         "required": [
@@ -509,7 +501,7 @@
  *         "Authentication"
  *       ],
  *       "summary": "Register a user",
- *       "description": "Public registration accepts member or admin roles and issues a JWT in data.token and an HTTP-only token cookie.",
+ *       "description": "Public registration always creates a member account (any role field is ignored) and issues a JWT in data.token and an HTTP-only token cookie. Admins are created with npm run create-admin.",
  *       "security": [],
  *       "responses": {
  *         "201": {

@@ -135,20 +135,21 @@ const bookings = require("./routes/bookings");
 
 dotenv.config({ path: "./config/config.env" });
 
-if (process.env.MONGO_URI) {
-  connectDB().catch((error) => {
-    console.error(`Database connection failed: ${error.message}`);
-    process.exit(1);
-  });
-}
-
 const app = express();
+
+// Behind a hosting proxy (Render, Railway, Heroku...) the client IP arrives in
+// X-Forwarded-For. Trust one hop in production so rate limiting is per user,
+// not one shared bucket for everyone. Override with TRUST_PROXY (number of hops).
+if (process.env.NODE_ENV === "production" || process.env.TRUST_PROXY) {
+  app.set("trust proxy", Number(process.env.TRUST_PROXY ?? 1));
+}
 
 app.use(helmet());
 app.use(hpp());
 app.use(rateLimit({
   windowMs: 10 * 60 * 1000,
-  limit: 100,
+  // Relaxed outside production so local frontend development does not hit the cap.
+  limit: process.env.NODE_ENV === "production" ? 100 : 1000,
   message: {
     success: false,
     error: "Too many requests from this IP, please try again later.",
@@ -228,19 +229,34 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => {
-  console.log(`Sports Facility Booking API running on http://localhost:${PORT}`);
-});
+// Connect and listen only when run directly (`node server.js`), so tests can
+// import `app` without touching the real database or opening a port.
+const start = () => {
+  if (process.env.MONGO_URI) {
+    connectDB().catch((error) => {
+      console.error(`Database connection failed: ${error.message}`);
+      process.exit(1);
+    });
+  }
 
-process.on("unhandledRejection", (error) => {
-  console.error(`Unhandled rejection: ${error.message}`);
-  server.close(() => process.exit(1));
-});
+  const PORT = process.env.PORT || 5000;
+  const server = app.listen(PORT, () => {
+    console.log(`Sports Facility Booking API running on http://localhost:${PORT}`);
+  });
 
-process.on("uncaughtException", (error) => {
-  console.error(`Uncaught exception: ${error.message}`);
-  process.exit(1);
-});
+  process.on("unhandledRejection", (error) => {
+    console.error(`Unhandled rejection: ${error.message}`);
+    server.close(() => process.exit(1));
+  });
 
-module.exports = { app, server };
+  process.on("uncaughtException", (error) => {
+    console.error(`Uncaught exception: ${error.message}`);
+    process.exit(1);
+  });
+
+  return server;
+};
+
+if (require.main === module) start();
+
+module.exports = { app, start };

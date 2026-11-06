@@ -253,6 +253,28 @@
  *   }
  * }
  */
+/**
+ * @swagger
+ * {
+ *   "/api/v1/facilities/{id}/availability": {
+ *     "get": {
+ *       "tags": ["Facilities"],
+ *       "summary": "List booked time ranges of a facility on a date",
+ *       "description": "Public. Returns only time ranges (no member details) so users can pick a free slot.",
+ *       "security": [],
+ *       "parameters": [
+ *         { "$ref": "#/components/parameters/ResourceId" },
+ *         { "name": "date", "in": "query", "required": true, "schema": { "type": "string", "example": "2026-11-20" } }
+ *       ],
+ *       "responses": {
+ *         "200": { "description": "Booked ranges sorted by start time." },
+ *         "400": { "description": "Missing or invalid date." },
+ *         "404": { "description": "Facility not found." }
+ *       }
+ *     }
+ *   }
+ * }
+ */
 const express = require("express");
 const {
   getFacilities,
@@ -260,11 +282,13 @@ const {
   createFacility,
   updateFacility,
   deleteFacility,
+  getFacilityAvailability,
 } = require("../controllers/facilities");
 const { protect, authorize } = require("../middleware/auth");
 
 const router = express.Router();
 router.route("/").get(getFacilities).post(protect, authorize("admin"), createFacility);
+router.get("/:id/availability", getFacilityAvailability);
 router.route("/:id").get(getFacility).put(protect, authorize("admin"), updateFacility).delete(protect, authorize("admin"), deleteFacility);
 
 module.exports = router;

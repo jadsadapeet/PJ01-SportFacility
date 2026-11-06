@@ -1,4 +1,5 @@
 const Facility = require("../models/Facility");
+const Booking = require("../models/Booking");
 
 exports.getFacilities = async (req, res, next) => {
   try {
@@ -51,6 +52,29 @@ exports.deleteFacility = async (req, res, next) => {
     );
     if (!facility) return res.status(404).json({ success: false, error: "Facility not found" });
     res.status(200).json({ success: true, data: {} });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Public: booked time ranges of one facility on one date (no member details).
+exports.getFacilityAvailability = async (req, res, next) => {
+  try {
+    const { date } = req.query;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(String(date || ""))) {
+      return res.status(400).json({ success: false, error: "date query in YYYY-MM-DD format is required" });
+    }
+    const facility = await Facility.findOne({ _id: req.params.id, isActive: true });
+    if (!facility) return res.status(404).json({ success: false, error: "Facility not found" });
+
+    const bookings = await Booking.find({ facility: facility.id, bookingDate: new Date(`${date}T00:00:00.000Z`) })
+      .select("startTime startMinutes endMinutes")
+      .sort({ startMinutes: 1 });
+    res.status(200).json({
+      success: true,
+      count: bookings.length,
+      data: bookings.map((b) => ({ id: b.id, startTime: b.startTime, startMinutes: b.startMinutes, endMinutes: b.endMinutes })),
+    });
   } catch (error) {
     next(error);
   }
