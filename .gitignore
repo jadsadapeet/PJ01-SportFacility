@@ -4,3 +4,6 @@ npm-debug.log*
 .DS_Store
 config/config.init.env
 postman/
+
+# local secrets
+config/config.env
