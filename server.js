@@ -146,12 +146,22 @@ if (process.env.NODE_ENV === "production" || process.env.TRUST_PROXY) {
   app.set("trust proxy", Number(process.env.TRUST_PROXY ?? 1));
 }
 
+// CORS goes first so every response, including 429s from the rate limiter,
+// carries CORS headers. Otherwise the browser hides the error and the frontend
+// just sees "Cannot reach the server".
+app.use(cors({
+  origin: process.env.NODE_ENV === "production"
+    ? process.env.FRONTEND_URL
+    : "http://localhost:3000",
+  credentials: true,
+}));
 app.use(helmet());
 app.use(hpp());
 app.use(rateLimit({
   windowMs: 10 * 60 * 1000,
-  // Relaxed outside production so local frontend development does not hit the cap.
-  limit: process.env.NODE_ENV === "production" ? 100 : 1000,
+  // The frontend calls the API often (/auth/me on every page, availability on
+  // every date change), so the cap is generous enough for a live demo.
+  limit: 1000,
   message: {
     success: false,
     error: "Too many requests from this IP, please try again later.",
@@ -160,12 +170,6 @@ app.use(rateLimit({
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
-app.use(cors({
-  origin: process.env.NODE_ENV === "production"
-    ? process.env.FRONTEND_URL
-    : "http://localhost:3000",
-  credentials: true,
-}));
 
 // Make sure MongoDB is connected before any API route runs. On Vercel the app is
 // imported (not started with `node server.js`), so this is where it connects.
