@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { api, errorMessage, type Booking } from "@/lib/api";
 import { formatBaht, formatDate, formatHours, formatRange, isoDate, localNow } from "@/lib/time";
+import { dismissFlash } from "@/lib/flash";
 import { ConfirmDialog, Empty, ErrorBanner, SuccessBanner } from "./ui";
 
 // Finished bookings can no longer be edited (the date would be in the past).
@@ -69,7 +70,7 @@ export default function BookingTable({
                 <th className="th">Duration</th>
                 <th className="th">Price</th>
                 {showMember && <th className="th">Booked by</th>}
-                <th className="th text-right">Actions</th>
+                <th className="th sticky right-0 bg-neutral-50 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-100">
@@ -91,7 +92,7 @@ export default function BookingTable({
                         {b.user && <span className="block text-xs text-neutral-500">{b.user.email}</span>}
                       </td>
                     )}
-                    <td className="td">
+                    <td className="td sticky right-0 bg-white">
                       <div className="flex justify-end gap-2">
                         {past ? (
                           <span className="px-3 py-1 text-xs">Finished</span>
@@ -100,7 +101,7 @@ export default function BookingTable({
                             Edit
                           </Link>
                         )}
-                        <button className="btn-danger btn-sm" onClick={() => { setDeletedMsg(""); setToDelete(b); }}>
+                        <button className="btn-danger btn-sm" onClick={() => { setDeletedMsg(""); setError(""); dismissFlash(); setToDelete(b); }}>
                           Delete
                         </button>
                       </div>

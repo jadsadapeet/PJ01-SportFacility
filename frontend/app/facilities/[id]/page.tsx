@@ -11,7 +11,7 @@ import { ErrorBanner, FacilityImage, Loading } from "@/components/ui";
 // 04 Facility Detail – anyone can view; only members can book.
 export default function FacilityDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [facility, setFacility] = useState<Facility | null>(null);
   const [today, setToday] = useState<BusySlot[] | null>(null);
   const [error, setError] = useState("");
@@ -58,12 +58,13 @@ export default function FacilityDetailPage() {
             </div>
 
             <div className="mt-8">
+              {authLoading && <p className="text-sm text-neutral-500">Checking your account…</p>}
               {user?.role === "member" && (
                 <Link href={`/facilities/${facility._id}/book`} className="btn-primary">
                   Book this facility
                 </Link>
               )}
-              {!user && (
+              {!authLoading && !user && (
                 <p className="text-sm text-neutral-600">
                   <Link href="/login" className="btn-primary mr-3">Log in to book</Link>
                   No account? <Link href="/register" className="underline">Register</Link>

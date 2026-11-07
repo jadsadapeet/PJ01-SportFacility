@@ -20,8 +20,17 @@ exports.getFacility = async (req, res, next) => {
   }
 };
 
+// Deleted facilities keep their row (soft delete), so the unique name index would
+// still block that name. Rename a deleted holder so the name can be reused.
+const freeNameFromDeleted = async (name) => {
+  if (typeof name !== "string" || !name.trim()) return;
+  const old = await Facility.findOne({ name: name.trim(), isActive: false });
+  if (old) await Facility.updateOne({ _id: old._id }, { name: `${old.name} [deleted ${old._id}]` });
+};
+
 exports.createFacility = async (req, res, next) => {
   try {
+    await freeNameFromDeleted(req.body.name);
     const facility = await Facility.create(req.body);
     res.status(201).json({ success: true, data: facility });
   } catch (error) {
@@ -31,6 +40,7 @@ exports.createFacility = async (req, res, next) => {
 
 exports.updateFacility = async (req, res, next) => {
   try {
+    await freeNameFromDeleted(req.body.name);
     const facility = await Facility.findOneAndUpdate(
       { _id: req.params.id, isActive: true },
       req.body,

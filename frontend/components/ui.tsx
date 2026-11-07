@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { clearFlash, peekFlash } from "@/lib/flash";
+import { clearFlash, DISMISS_EVENT, peekFlash } from "@/lib/flash";
 
 export function PageHeader({
   title,
@@ -66,8 +66,13 @@ export function SuccessBanner({ message }: { message: string }) {
 
 // Shows the one-time message set by the previous page, if any.
 export function FlashMessage() {
-  const [msg] = useState(peekFlash);
-  useEffect(() => clearFlash(), []);
+  const [msg, setMsg] = useState(peekFlash);
+  useEffect(() => {
+    clearFlash();
+    const hide = () => setMsg(null);
+    window.addEventListener(DISMISS_EVENT, hide);
+    return () => window.removeEventListener(DISMISS_EVENT, hide);
+  }, []);
   return msg ? <SuccessBanner message={msg} /> : null;
 }
 

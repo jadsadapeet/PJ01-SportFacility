@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { dismissFlash } from "@/lib/flash";
 import { api, errorMessage, type Facility } from "@/lib/api";
 import { formatBaht } from "@/lib/time";
 import RequireAuth from "@/components/RequireAuth";
@@ -84,7 +85,7 @@ function ManageFacilities() {
                   <td className="td">
                     <div className="flex justify-end gap-2">
                       <Link href={`/admin/facilities/${f._id}/edit`} className="btn-secondary btn-sm">Edit</Link>
-                      <button className="btn-danger btn-sm" onClick={() => { setDeletedMsg(""); setToDelete(f); }}>Delete</button>
+                      <button className="btn-danger btn-sm" onClick={() => { setDeletedMsg(""); setError(""); dismissFlash(); setToDelete(f); }}>Delete</button>
                     </div>
                   </td>
                 </tr>

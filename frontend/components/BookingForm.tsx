@@ -51,7 +51,7 @@ export default function BookingForm({ mode, facility: initialFacility, facilitie
     durationHours: booking ? String(booking.durationHours) : "1",
   });
   const [touched, setTouched] = useState(false);
-  // Error returned by the backend (400 / 409 / ...), shown until the next submit.
+  // Error returned by the backend (400 / 409 / ...), cleared on the next edit or submit.
   const [serverError, setServerError] = useState<{ status: number; message: string } | null>(null);
   const bannerRef = useRef<HTMLDivElement>(null);
   const [busy, setBusy] = useState(false);
@@ -108,8 +108,13 @@ export default function BookingForm({ mode, facility: initialFacility, facilitie
   const shownErrors = touched ? errors : {};
   const total = Number.isFinite(duration) && duration > 0 ? facility.hourlyRate * duration : 0;
 
+  // Editing the form hides the previous server error; it no longer applies.
+  const update = (next: BookingDraft) => {
+    setDraft(next);
+    setServerError(null);
+  };
   const set = (key: keyof BookingDraft) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
-    setDraft({ ...draft, [key]: e.target.value });
+    update({ ...draft, [key]: e.target.value });
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -165,7 +170,7 @@ export default function BookingForm({ mode, facility: initialFacility, facilitie
           <div className="sm:col-span-2">
             <Field label="Facility">
               {mode === "edit" && facilities ? (
-                <select className="input" value={facilityId} onChange={(e) => setFacilityId(e.target.value)}>
+                <select className="input" value={facilityId} onChange={(e) => { setFacilityId(e.target.value); setServerError(null); }}>
                   {facilities.map((f) => (
                     <option key={f._id} value={f._id}>
                       {f.name} · {f.sportType}
@@ -232,7 +237,7 @@ export default function BookingForm({ mode, facility: initialFacility, facilitie
               pastUntil={pastUntil}
               selection={selection}
               mineLabel={forOther ? "Member's other booking" : "Your other booking"}
-              onPick={(t) => setDraft({ ...draft, startTime: t })}
+              onPick={(t) => update({ ...draft, startTime: t })}
             />
           ) : (
             <p className="rounded-md border border-dashed border-neutral-300 p-4 text-center text-sm text-neutral-500">

@@ -35,7 +35,10 @@ export default function FacilityForm({ facility }: { facility?: Facility }) {
   const [serverError, setServerError] = useState("");
   const [busy, setBusy] = useState(false);
 
-  const set = (k: keyof Draft) => (e: React.ChangeEvent<HTMLInputElement>) => setDraft({ ...draft, [k]: e.target.value });
+  const set = (k: keyof Draft) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDraft({ ...draft, [k]: e.target.value });
+    setServerError("");
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
