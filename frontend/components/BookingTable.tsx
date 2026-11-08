@@ -62,7 +62,7 @@ export default function BookingTable({
       ) : (
         <div className="card overflow-x-auto">
           <table className="w-full min-w-[640px]">
-            <thead className="border-b border-neutral-200 bg-neutral-50">
+            <thead className="border-b border-line bg-surface-2">
               <tr>
                 <th className="th">Facility</th>
                 <th className="th">Date</th>
@@ -70,17 +70,17 @@ export default function BookingTable({
                 <th className="th">Duration</th>
                 <th className="th">Price</th>
                 {showMember && <th className="th">Booked by</th>}
-                <th className="th sticky right-0 bg-neutral-50 text-right">Actions</th>
+                <th className="th sticky right-0 bg-surface-2 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100">
+            <tbody className="divide-y divide-line">
               {bookings.map((b) => {
                 const past = isPast(b);
                 return (
-                  <tr key={b._id} className={past ? "text-neutral-400" : ""}>
-                    <td className="td font-medium">
+                  <tr key={b._id} className={past ? "text-muted" : ""}>
+                    <td className="td font-semibold">
                       {b.facility?.name ?? "Removed facility"}
-                      {b.facility && <span className="block text-xs font-normal text-neutral-500">{b.facility.sportType} · {b.facility.location}</span>}
+                      {b.facility && <span className="block mt-0.5 text-xs font-normal text-muted">{b.facility.sportType} · {b.facility.location}</span>}
                     </td>
                     <td className="td whitespace-nowrap">{formatDate(b.bookingDate)}</td>
                     <td className="td whitespace-nowrap">{formatRange(b.startMinutes, b.endMinutes)}</td>
@@ -89,19 +89,19 @@ export default function BookingTable({
                     {showMember && (
                       <td className="td">
                         {b.user?.name ?? "Deleted user"}
-                        {b.user && <span className="block text-xs text-neutral-500">{b.user.email}</span>}
+                        {b.user && <span className="mt-0.5 block text-xs text-muted">{b.user.email}</span>}
                       </td>
                     )}
                     <td className="td sticky right-0 bg-white">
                       <div className="flex justify-end gap-2">
                         {past ? (
-                          <span className="px-3 py-1 text-xs">Finished</span>
+                          <span className="chip chip-muted">Past</span>
                         ) : (
                           <Link href={`/bookings/${b._id}/edit`} className="btn-secondary btn-sm">
                             Edit
                           </Link>
                         )}
-                        <button className="btn-danger btn-sm" onClick={() => { setDeletedMsg(""); setError(""); dismissFlash(); setToDelete(b); }}>
+                        <button className="btn-danger-soft btn-sm" onClick={() => { setDeletedMsg(""); setError(""); dismissFlash(); setToDelete(b); }}>
                           Delete
                         </button>
                       </div>

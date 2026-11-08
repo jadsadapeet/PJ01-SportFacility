@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { api, errorMessage, type Facility } from "@/lib/api";
-import { formatBaht } from "@/lib/time";
 import { Empty, ErrorBanner, FacilityImage, Loading, PageHeader } from "@/components/ui";
 
 // 01 Home – public facility list with search and sport filter.
@@ -70,19 +69,23 @@ export default function HomePage() {
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {shown.map((f) => (
-          <div key={f._id} className="card flex flex-col overflow-hidden">
-            <FacilityImage sportType={f.sportType} className="h-40" />
+          <div key={f._id} className="card flex flex-col overflow-hidden transition hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand/10">
+            <FacilityImage sportType={f.sportType} className="h-40 border-b border-line" />
             <div className="flex flex-1 flex-col p-4">
-              <h2 className="font-semibold">{f.name}</h2>
-              <p className="mt-1 text-sm text-neutral-600">
-                {f.sportType} · {f.location}
+              <h2 className="text-lg font-bold">
+                <Link href={`/facilities/${f._id}`} className="hover:text-brand">{f.name}</Link>
+              </h2>
+              <p className="mt-1 text-[13px] text-muted">
+                {f.location} · {f.capacity} {f.capacity === 1 ? "person" : "people"}
               </p>
-              <p className="mt-1 text-sm text-neutral-600">
-                Capacity {f.capacity} · {formatBaht(f.hourlyRate)}/hr
-              </p>
-              <Link href={`/facilities/${f._id}`} className="btn-secondary mt-4 self-start">
-                View details
-              </Link>
+              <div className="mt-auto flex items-end justify-between gap-3 pt-5">
+                <p className="text-[15px] text-ink">
+                  <span className="font-display text-xl font-bold">{f.hourlyRate.toLocaleString("en-US")}</span> THB/hr
+                </p>
+                <Link href={`/facilities/${f._id}`} className="btn-primary btn-sm">
+                  Book
+                </Link>
+              </div>
             </div>
           </div>
         ))}

@@ -1,61 +1,111 @@
 @import "tailwindcss";
 
-/* Grayscale wireframe theme. Swap these later for brand colours. */
-:root {
-  --background: #fafafa;
-  --foreground: #222222;
-}
-
+/* Style tile A · Court Green */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: #f6f7f2;
+  --color-foreground: #14211a;
+
+  --color-brand: #146c43; /* Court Green – primary */
+  --color-brand-dark: #0f5434;
+  --color-lime: #c8f04d; /* Lime Ball – accent */
+  --color-lime-dark: #b6de3a;
+  --color-ink: #14211a;
+  --color-muted: #56655a;
+  --color-line: #d5dbcf;
+  --color-surface-2: #eef1e8;
+  --color-danger: #b42318;
+  --color-danger-dark: #93190f;
+  --color-danger-soft: #fdecea;
+  --color-danger-line: #f3b8b1;
+  --color-success-soft: #e5f3ea;
+  --color-success-line: #b7dcc6;
+
+  /* Green-tinted greys so any leftover neutral-* class matches the tile. */
+  --color-neutral-50: #f6f7f2;
+  --color-neutral-100: #eef1e8;
+  --color-neutral-200: #d5dbcf;
+  --color-neutral-300: #c3cbbd;
+  --color-neutral-400: #919d93;
+  --color-neutral-500: #56655a;
+  --color-neutral-600: #56655a;
+  --color-neutral-700: #3a4a3f;
+  --color-neutral-800: #24332a;
+  --color-neutral-900: #14211a;
+
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-space-grotesk), var(--font-inter);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+
+@layer base {
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight;
+  }
 }
 
 @layer components {
   .btn,
   .btn-primary,
   .btn-secondary,
-  .btn-danger {
-    @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50;
+  .btn-danger,
+  .btn-danger-soft {
+    @apply inline-flex h-11 items-center justify-center gap-2 rounded-[10px] px-5 text-[15px] font-semibold transition focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-primary {
-    @apply bg-neutral-900 text-white hover:bg-neutral-700;
+    @apply bg-brand text-white hover:bg-brand-dark;
   }
   .btn-secondary {
-    @apply border border-neutral-300 bg-white text-neutral-800 hover:bg-neutral-100;
+    @apply border border-line bg-white text-ink hover:bg-surface-2;
   }
   .btn-danger {
-    @apply border border-neutral-900 bg-white text-neutral-900 hover:bg-neutral-900 hover:text-white;
+    @apply bg-danger text-white hover:bg-danger-dark;
+  }
+  .btn-danger-soft {
+    @apply border border-danger-line bg-danger-soft text-danger hover:bg-danger hover:text-white;
   }
   .btn-sm {
-    @apply px-3 py-1 text-xs;
+    @apply h-9 rounded-lg px-3.5 text-sm;
+  }
+  .link {
+    @apply font-semibold text-brand underline underline-offset-2 hover:text-brand-dark;
+  }
+  .chip {
+    @apply inline-flex h-7 items-center rounded-full px-3 text-[13px] font-semibold;
+  }
+  .chip-lime {
+    @apply bg-lime text-ink;
+  }
+  .chip-muted {
+    @apply bg-surface-2 text-muted;
   }
   .card {
-    @apply rounded-lg border border-neutral-200 bg-white;
+    @apply rounded-2xl border border-line bg-white;
+  }
+  .eyebrow {
+    @apply text-xs font-semibold tracking-[0.12em] text-muted uppercase;
   }
   .label {
-    @apply mb-1 block text-sm font-medium text-neutral-700;
+    @apply mb-1.5 block text-[13px] font-medium text-ink;
   }
   .input {
-    @apply w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-800 focus:ring-1 focus:ring-neutral-800;
+    @apply h-11 w-full rounded-[10px] border border-line bg-white px-3.5 text-[15px] text-ink outline-none placeholder:text-muted/70 focus:border-brand focus:ring-1 focus:ring-brand [&[readonly]]:bg-surface-2;
   }
   .input-error {
-    @apply border-2 border-neutral-900 bg-neutral-100;
+    @apply border-danger bg-danger-soft ring-1 ring-danger focus:border-danger focus:ring-danger;
   }
   .field-error {
-    @apply mt-1 text-xs font-medium text-neutral-900 before:content-['!_'];
+    @apply mt-1.5 text-xs font-medium text-danger;
   }
   .th {
-    @apply px-4 py-3 text-left text-xs font-semibold tracking-wide text-neutral-500 uppercase;
+    @apply px-5 py-3 text-left text-xs font-semibold tracking-wider text-muted uppercase;
   }
   .td {
-    @apply px-4 py-3 text-sm;
+    @apply px-5 py-4 text-[15px];
   }
 }

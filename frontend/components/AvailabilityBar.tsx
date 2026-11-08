@@ -12,12 +12,12 @@ type SlotState = "free" | "booked" | "mine" | "past" | "selected" | "clash";
 const overlaps = (a: Range, b: Range) => a.startMinutes < b.endMinutes && a.endMinutes > b.startMinutes;
 
 const styles: Record<SlotState, string> = {
-  free: "bg-white hover:bg-neutral-200 cursor-pointer",
-  booked: "bg-neutral-700 cursor-not-allowed",
-  mine: "bg-[repeating-linear-gradient(45deg,#525252_0_3px,#e5e5e5_3px_7px)] cursor-not-allowed",
-  past: "bg-neutral-100 cursor-not-allowed",
-  selected: "bg-neutral-400",
-  clash: "bg-neutral-900 ring-2 ring-inset ring-white",
+  free: "bg-surface-2 hover:bg-lime/50 cursor-pointer",
+  booked: "bg-ink cursor-not-allowed",
+  mine: "bg-[repeating-linear-gradient(45deg,var(--color-brand)_0_3px,white_3px_7px)] cursor-not-allowed",
+  past: "bg-surface-2/50 cursor-not-allowed",
+  selected: "bg-lime",
+  clash: "bg-danger",
 };
 
 // Day timeline in 30-minute cells. Click a free cell to choose a start time.
@@ -56,7 +56,7 @@ export default function AvailabilityBar({
 
   return (
     <div>
-      <div className="flex overflow-hidden rounded-md border border-neutral-300">
+      <div className="flex gap-0.5 sm:gap-1">
         {cells.map((c) => (
           <button
             key={c.start}
@@ -64,22 +64,22 @@ export default function AvailabilityBar({
             title={`${fromMinutes(c.start)} – ${fromMinutes(c.start + 30)} · ${c.state === "mine" ? mineLabel.toLowerCase() : label[c.state]}`}
             disabled={c.state === "booked" || c.state === "mine" || c.state === "past"}
             onClick={() => onPick(fromMinutes(c.start))}
-            className={`h-10 flex-1 border-r border-neutral-200 last:border-r-0 ${styles[c.state]}`}
+            className={`h-10 min-w-0 flex-1 rounded-[3px] sm:rounded ${styles[c.state]}`}
           />
         ))}
       </div>
-      <div className="relative mt-1 h-4 text-[10px] text-neutral-500">
+      <div className="relative mt-1.5 h-4 text-[11px] text-muted sm:text-xs">
         {hours.map((h) => (
           <span
             key={h}
-            className="absolute -translate-x-1/2"
+            className={`absolute ${h === OPEN_HOUR ? "" : h === CLOSE_HOUR ? "-translate-x-full" : "-translate-x-1/2"}`}
             style={{ left: `${((h - OPEN_HOUR) / (CLOSE_HOUR - OPEN_HOUR)) * 100}%` }}
           >
             {String(h).padStart(2, "0")}:00
           </span>
         ))}
       </div>
-      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-neutral-600">
+      <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-[13px] text-ink">
         <Legend cls={styles.free}>Available</Legend>
         <Legend cls={styles.booked}>Booked</Legend>
         <Legend cls={styles.mine}>{mineLabel}</Legend>
@@ -102,7 +102,7 @@ const label: Record<SlotState, string> = {
 function Legend({ cls, children }: { cls: string; children: React.ReactNode }) {
   return (
     <span className="inline-flex items-center gap-1.5">
-      <span className={`inline-block h-3 w-3 rounded-sm border border-neutral-300 ${cls}`} />
+      <span className={`inline-block h-3.5 w-3.5 rounded-[3px] ${cls.includes("bg-surface-2") ? "border border-line" : ""} ${cls}`} />
       {children}
     </span>
   );

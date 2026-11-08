@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
+import { Logo } from "./ui";
 
 function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
   const pathname = usePathname();
@@ -10,8 +11,8 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
   return (
     <Link
       href={href}
-      className={`whitespace-nowrap rounded-md px-2 py-2 text-sm lg:px-3 ${
-        active ? "bg-neutral-900 text-white" : "text-neutral-700 hover:bg-neutral-100"
+      className={`whitespace-nowrap rounded-lg px-2.5 py-2 text-sm lg:px-3.5 ${
+        active ? "bg-surface-2 font-semibold text-brand" : "font-medium text-ink hover:bg-surface-2"
       }`}
     >
       {children}
@@ -29,9 +30,10 @@ export default function Navbar() {
   };
 
   return (
-    <header className="border-b border-neutral-200 bg-white">
+    <header className="sticky top-0 z-40 border-b border-line bg-white/90 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-        <Link href="/" className="shrink-0 text-lg font-bold tracking-tight">
+        <Link href="/" className="flex shrink-0 items-center gap-2.5 font-display text-lg font-bold tracking-tight">
+          <Logo />
           SportBook
         </Link>
 
@@ -47,10 +49,10 @@ export default function Navbar() {
 
           {!loading && !user && (
             <>
-              <Link href="/login" className="btn-secondary ml-2">
+              <Link href="/login" className="btn-secondary btn-sm ml-2">
                 Log in
               </Link>
-              <Link href="/register" className="btn-primary">
+              <Link href="/register" className="btn-primary btn-sm">
                 Register
               </Link>
             </>
@@ -58,10 +60,10 @@ export default function Navbar() {
 
           {!loading && user && (
             <>
-              <span className="ml-3 hidden whitespace-nowrap text-sm text-neutral-500 lg:inline">
+              <span className="ml-3 hidden whitespace-nowrap text-sm text-muted lg:inline">
                 {user.name} ({user.role})
               </span>
-              <button onClick={onLogout} className="btn-secondary ml-2 whitespace-nowrap">
+              <button onClick={onLogout} className="btn-secondary btn-sm ml-2 whitespace-nowrap">
                 Log out
               </button>
             </>

@@ -62,7 +62,7 @@ function ManageFacilities() {
       {facilities && facilities.length > 0 && (
         <div className="card overflow-x-auto">
           <table className="w-full min-w-[640px]">
-            <thead className="border-b border-neutral-200 bg-neutral-50">
+            <thead className="border-b border-line bg-surface-2">
               <tr>
                 <th className="th">Name</th>
                 <th className="th">Sport type</th>
@@ -72,20 +72,20 @@ function ManageFacilities() {
                 <th className="th text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100">
+            <tbody className="divide-y divide-line">
               {facilities.map((f) => (
                 <tr key={f._id}>
-                  <td className="td font-medium">
-                    <Link href={`/facilities/${f._id}`} className="hover:underline">{f.name}</Link>
+                  <td className="td font-semibold">
+                    <Link href={`/facilities/${f._id}`} className="hover:text-brand hover:underline">{f.name}</Link>
                   </td>
-                  <td className="td">{f.sportType}</td>
+                  <td className="td"><span className="chip chip-lime h-6 text-xs">{f.sportType}</span></td>
                   <td className="td">{f.location}</td>
                   <td className="td">{f.capacity}</td>
                   <td className="td whitespace-nowrap">{formatBaht(f.hourlyRate)}</td>
                   <td className="td">
                     <div className="flex justify-end gap-2">
                       <Link href={`/admin/facilities/${f._id}/edit`} className="btn-secondary btn-sm">Edit</Link>
-                      <button className="btn-danger btn-sm" onClick={() => { setDeletedMsg(""); setError(""); dismissFlash(); setToDelete(f); }}>Delete</button>
+                      <button className="btn-danger-soft btn-sm" onClick={() => { setDeletedMsg(""); setError(""); dismissFlash(); setToDelete(f); }}>Delete</button>
                     </div>
                   </td>
                 </tr>

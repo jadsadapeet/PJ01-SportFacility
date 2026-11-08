@@ -27,8 +27,8 @@ export default function FacilityDetailPage() {
 
   return (
     <>
-      <Link href="/" className="mb-4 inline-block text-sm text-neutral-600 hover:underline">
-        &lt; Back to facilities
+      <Link href="/" className="mb-4 inline-block text-sm font-medium text-muted hover:text-brand">
+        ← Back to facilities
       </Link>
 
       {error && <ErrorBanner title="Facility not available" message={error} />}
@@ -36,9 +36,10 @@ export default function FacilityDetailPage() {
 
       {facility && (
         <div className="card grid overflow-hidden md:grid-cols-2">
-          <FacilityImage sportType={facility.sportType} className="h-64 md:h-full" />
+          <FacilityImage sportType={facility.sportType} className="h-64 md:h-full md:min-h-80" sizes="(max-width: 768px) 100vw, 560px" priority />
           <div className="p-8">
-            <h1 className="text-2xl font-bold">{facility.name}</h1>
+            <p className="eyebrow">{facility.sportType}</p>
+            <h1 className="mt-1 text-3xl font-bold sm:text-4xl">{facility.name}</h1>
             <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
               <Info k="Sport type" v={facility.sportType} />
               <Info k="Location" v={facility.location} />
@@ -46,28 +47,28 @@ export default function FacilityDetailPage() {
               <Info k="Hourly rate" v={`${formatBaht(facility.hourlyRate)} / hour`} />
             </dl>
 
-            <div className="mt-6 border-t border-neutral-200 pt-4">
-              <p className="text-sm font-medium">Booked today</p>
+            <div className="mt-6 border-t border-line pt-4">
+              <p className="eyebrow mb-1">Booked today</p>
               {today === null ? (
-                <p className="text-sm text-neutral-500">Checking…</p>
+                <p className="text-sm text-muted">Checking…</p>
               ) : today.length === 0 ? (
-                <p className="text-sm text-neutral-500">No bookings today – open 06:00 – 24:00</p>
+                <p className="text-sm text-muted">No bookings today – open 06:00 – 24:00</p>
               ) : (
-                <p className="text-sm text-neutral-600">{today.map((s) => formatRange(s.startMinutes, s.endMinutes)).join(", ")}</p>
+                <p className="font-display text-lg font-medium">{today.map((s) => formatRange(s.startMinutes, s.endMinutes)).join(", ")}</p>
               )}
             </div>
 
             <div className="mt-8">
-              {authLoading && <p className="text-sm text-neutral-500">Checking your account…</p>}
+              {authLoading && <p className="text-sm text-muted">Checking your account…</p>}
               {user?.role === "member" && (
                 <Link href={`/facilities/${facility._id}/book`} className="btn-primary">
                   Book this facility
                 </Link>
               )}
               {!authLoading && !user && (
-                <p className="text-sm text-neutral-600">
+                <p className="text-sm text-muted">
                   <Link href="/login" className="btn-primary mr-3">Log in to book</Link>
-                  No account? <Link href="/register" className="underline">Register</Link>
+                  No account? <Link href="/register" className="link">Register</Link>
                 </p>
               )}
               {user?.role === "admin" && (
@@ -86,8 +87,8 @@ export default function FacilityDetailPage() {
 function Info({ k, v }: { k: string; v: string }) {
   return (
     <div>
-      <dt className="text-neutral-500">{k}</dt>
-      <dd className="font-medium">{v}</dd>
+      <dt className="text-[13px] text-muted">{k}</dt>
+      <dd className="mt-0.5 text-[15px] font-semibold">{v}</dd>
     </div>
   );
 }

@@ -49,7 +49,7 @@ function MyBookings() {
             onDeleted={(id) => setBookings((list) => (list ?? []).filter((b) => b._id !== id))}
             emptyText={
               tab === "upcoming" ? (
-                <>No upcoming bookings. <Link href="/" className="underline">Find a facility</Link></>
+                <>No upcoming bookings. <Link href="/" className="link">Find a facility</Link></>
               ) : (
                 "No past bookings."
               )

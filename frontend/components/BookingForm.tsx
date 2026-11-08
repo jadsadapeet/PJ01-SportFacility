@@ -162,7 +162,7 @@ export default function BookingForm({ mode, facility: initialFacility, facilitie
           {mode === "edit" && (
             <div className="sm:col-span-2">
               <Field label="Member (read-only)">
-                <input className="input bg-neutral-100" readOnly value={`${owner.name} (${owner.email})`} />
+                <input className="input" readOnly value={`${owner.name} (${owner.email})`} />
               </Field>
             </div>
           )}
@@ -178,7 +178,7 @@ export default function BookingForm({ mode, facility: initialFacility, facilitie
                   ))}
                 </select>
               ) : (
-                <input className="input bg-neutral-100" readOnly value={facility.name} />
+                <input className="input" readOnly value={facility.name} />
               )}
             </Field>
           </div>
@@ -213,21 +213,21 @@ export default function BookingForm({ mode, facility: initialFacility, facilitie
                 value={draft.durationHours}
                 onChange={set("durationHours")}
               />
-              <span className="text-sm text-neutral-500">hours</span>
+              <span className="text-sm text-muted">hours</span>
             </div>
           </Field>
 
           <div className="flex items-end">
             {selection && (
-              <p className="text-sm text-neutral-600">
-                Ends at <strong>{formatRange(selection.startMinutes, selection.endMinutes).split(" – ")[1]}</strong>
+              <p className="pb-3 text-[13px] text-muted">
+                Ends at <strong className="text-ink">{formatRange(selection.startMinutes, selection.endMinutes).split(" – ")[1]}</strong>
               </p>
             )}
           </div>
         </div>
 
         <div className="mt-6">
-          <p className="label">
+          <p className="mb-3 text-sm font-semibold">
             Availability {dateOk ? `on ${formatDate(draft.bookingDate)}` : ""}
           </p>
           {dateOk ? (
@@ -240,7 +240,7 @@ export default function BookingForm({ mode, facility: initialFacility, facilitie
               onPick={(t) => update({ ...draft, startTime: t })}
             />
           ) : (
-            <p className="rounded-md border border-dashed border-neutral-300 p-4 text-center text-sm text-neutral-500">
+            <p className="rounded-xl border border-dashed border-line bg-surface-2/50 p-4 text-center text-sm text-muted">
               Choose a date to see which times are free
             </p>
           )}
@@ -259,27 +259,27 @@ export default function BookingForm({ mode, facility: initialFacility, facilitie
 
       <aside className="space-y-4">
         <div className="card p-5">
-          <h2 className="mb-3 font-semibold">Summary</h2>
-          <p className="font-medium">{facility.name}</p>
-          <p className="text-sm text-neutral-600">{facility.location}</p>
-          <p className="text-sm text-neutral-600">{formatBaht(facility.hourlyRate)} / hour</p>
-          <dl className="mt-4 space-y-1 border-t border-neutral-200 pt-4 text-sm">
+          <p className="eyebrow mb-3">Summary</p>
+          <p className="font-display text-lg font-bold">{facility.name}</p>
+          <p className="text-[13px] text-muted">{facility.location}</p>
+          <p className="text-[13px] text-muted">{formatBaht(facility.hourlyRate)} / hour</p>
+          <dl className="mt-4 space-y-1.5 border-t border-line pt-4 text-sm">
             <Row k="Date" v={dateOk ? formatDate(draft.bookingDate) : "–"} />
             <Row k="Time" v={selection ? formatRange(selection.startMinutes, selection.endMinutes) : "–"} />
             <Row k="Duration" v={Number.isFinite(duration) && duration > 0 ? `${duration} h` : "–"} />
           </dl>
-          <p className="mt-4 flex justify-between border-t border-neutral-200 pt-4 font-semibold">
+          <p className="mt-4 flex items-baseline justify-between border-t border-line pt-4 font-semibold">
             <span>Total</span>
-            <span>{formatBaht(total)}</span>
+            <span className="font-display text-2xl font-bold text-brand">{formatBaht(total)}</span>
           </p>
-          <p className="mt-1 text-xs text-neutral-500">Pay at the counter. Open daily 06:00 – {String(CLOSE_HOUR).padStart(2, "0")}:00.</p>
+          <p className="mt-1 text-xs text-muted">Pay at the counter. Open daily 06:00 – {String(CLOSE_HOUR).padStart(2, "0")}:00.</p>
         </div>
 
         <div className="card p-5">
-          <h2 className="mb-2 font-semibold">Booking rules</h2>
-          <ul className="space-y-1 text-sm text-neutral-600">
+          <p className="eyebrow mb-3">Booking rules</p>
+          <ul className="space-y-2 text-sm text-ink">
             {RULES.map((r) => (
-              <li key={r}>• {r}</li>
+              <li key={r} className="flex gap-2"><span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-lime" />{r}</li>
             ))}
           </ul>
         </div>
@@ -291,7 +291,7 @@ export default function BookingForm({ mode, facility: initialFacility, facilitie
 function Row({ k, v }: { k: string; v: string }) {
   return (
     <div className="flex justify-between">
-      <dt className="text-neutral-500">{k}</dt>
+      <dt className="text-muted">{k}</dt>
       <dd>{v}</dd>
     </div>
   );

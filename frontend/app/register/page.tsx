@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { homeFor, useAuth, type RegisterInput } from "@/lib/auth";
 import { errorMessage } from "@/lib/api";
-import { ErrorBanner, Field } from "@/components/ui";
+import { ErrorBanner, Field, Logo } from "@/components/ui";
 
 type Errors = Partial<Record<keyof RegisterInput, string>>;
 
@@ -60,9 +60,10 @@ export default function RegisterPage() {
 
   return (
     <div className="mx-auto max-w-md">
-      <div className="card p-8">
-        <h1 className="text-2xl font-bold">Create account</h1>
-        <p className="mt-1 mb-6 text-sm text-neutral-500">Sign up as a member to book facilities</p>
+      <div className="card p-8 sm:p-10">
+        <Logo size={40} />
+        <h1 className="mt-5 text-3xl font-bold">Create account</h1>
+        <p className="mt-1 mb-6 text-[15px] text-muted">Sign up as a member to book facilities</p>
 
         {serverError && <ErrorBanner title="Could not register" message={serverError} />}
 
@@ -84,9 +85,9 @@ export default function RegisterPage() {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-neutral-500">
+        <p className="mt-6 text-center text-sm text-muted">
           Already have an account?{" "}
-          <Link href="/login" className="font-medium text-neutral-900 underline">
+          <Link href="/login" className="link">
             Log in
           </Link>
         </p>

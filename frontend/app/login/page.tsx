@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { homeFor, useAuth } from "@/lib/auth";
 import { errorMessage } from "@/lib/api";
-import { ErrorBanner, Field } from "@/components/ui";
+import { ErrorBanner, Field, Logo } from "@/components/ui";
 
 // 03 Log in – member goes to Facilities, admin goes to All Bookings.
 export default function LoginPage() {
@@ -35,9 +35,10 @@ export default function LoginPage() {
 
   return (
     <div className="mx-auto max-w-md">
-      <div className="card p-8">
-        <h1 className="text-2xl font-bold">Log in</h1>
-        <p className="mt-1 mb-6 text-sm text-neutral-500">Use your email and password</p>
+      <div className="card p-8 sm:p-10">
+        <Logo size={40} />
+        <h1 className="mt-5 text-3xl font-bold">Log in</h1>
+        <p className="mt-1 mb-6 text-[15px] text-muted">Use your email and password</p>
 
         {error && <ErrorBanner message={error} />}
 
@@ -53,9 +54,9 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-neutral-500">
+        <p className="mt-6 text-center text-sm text-muted">
           No account yet?{" "}
-          <Link href="/register" className="font-medium text-neutral-900 underline">
+          <Link href="/register" className="link">
             Register
           </Link>
         </p>
